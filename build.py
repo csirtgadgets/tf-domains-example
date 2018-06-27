@@ -2,21 +2,16 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 import textwrap
 import sys
 
-if sys.version_info > (3,):
-    from urllib.parse import urlparse
-    basestring = (str, bytes)
-else:
-    from urlparse import urlparse
-
 
 def main():
     p = ArgumentParser(
         description=textwrap.dedent('''\
                 example usage:
-                    $ csirtg-urlsml --training data/training.csv -i http://badsite.com/1.html
+                    $ cat data/whitelist.txt | python build.py --good > good.csv
+                    $ cat data/blacklist.txt | python build.py > bad.csv
+                    $ cat good.csv bad.csv | gshuf > training.csv
                 '''),
         formatter_class=RawDescriptionHelpFormatter,
-        prog='csirtg-urlsml'
     )
 
     p.add_argument('-d', '--debug', dest='debug', action="store_true")
@@ -29,6 +24,7 @@ def main():
 
         if args.good:
             print('"%s",0' % (l.lower()))
+            print('"www.%s",0' % (l.lower()))
         else:
             print('"%s",1' % (l.lower()))
 

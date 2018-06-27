@@ -10,12 +10,10 @@ import sys
 import os
 import json
 import pandas
-import numpy
 import optparse
 from keras.models import Sequential, load_model
 from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
-from collections import OrderedDict
 from pprint import pprint
 
 
@@ -39,12 +37,9 @@ def predict(csv_file, log_entry):
     txt = json.loads(txt)
     tokenizer.word_index = txt
 
-    #tokenizer.fit_on_texts(X)
     seq = tokenizer.texts_to_sequences([log_entry])
     max_log_length = 255
     log_entry_processed = sequence.pad_sequences(seq, maxlen=max_log_length)
-
-    pprint(log_entry_processed)
 
     model = load_model('model.h5')
     model.load_weights('weights.h5')
