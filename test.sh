@@ -1,14 +1,5 @@
 #!/bin/bash
 
-DOMAINS=(
-  'google.com'
-  'g00gle.com'
-  'paypal.com'
-  'www.paypal.com'
-  'paypal-accounts.com'
-)
+DOMAINS="google.com,g00gle.com,paypal.com,secure-paypal.com,securitymywindowspcsystem.info,bank.wellsbankingsecurelogin.com,apple-gps-tracker.xyz"
 
-for i in "${DOMAINS[@]}"; do
-  echo "testing: $i"
-  python predict.py "$i"
-done
+python predict.py "${DOMAINS}"

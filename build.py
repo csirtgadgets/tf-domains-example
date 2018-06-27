@@ -24,7 +24,6 @@ def main():
 
         if args.good:
             print('"%s",0' % (l.lower()))
-            print('"www.%s",0' % (l.lower()))
         else:
             print('"%s",1' % (l.lower()))
 

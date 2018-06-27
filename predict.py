@@ -16,18 +16,12 @@ from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
 from pprint import pprint
 
+BATCH_SIZE = os.getenv('TF_BATCHSIZE', 32)
 
-def predict(csv_file, log_entry):
-    # Loading processed word dictionary into keras Tokenizer would be better
-    dataframe = pandas.read_csv(csv_file, engine='python', quotechar='"', header=None)
-    dataset = dataframe.values
 
-    # Preprocess dataset
-    X = dataset[:, 0]
-    for index, item in enumerate(X):
-        X[index] = item
-
-    tokenizer = Tokenizer(filters='\t\n', char_level=True)
+def predict(log_entry):
+    # tokenizer = Tokenizer(filters='\t\n', char_level=True)
+    tokenizer = Tokenizer(filters='\t\n', char_level=True, lower=True, split='.')
 
     word_dict_file = os.path.join('build/word-dict.json')
 
@@ -37,15 +31,17 @@ def predict(csv_file, log_entry):
     txt = json.loads(txt)
     tokenizer.word_index = txt
 
-    seq = tokenizer.texts_to_sequences([log_entry])
+    seq = tokenizer.texts_to_sequences(log_entry)
     max_log_length = 255
     log_entry_processed = sequence.pad_sequences(seq, maxlen=max_log_length)
 
     model = load_model('model.h5')
     model.load_weights('weights.h5')
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    prediction = model.predict(log_entry_processed)
-    print(prediction[0])
+    prediction = model.predict(log_entry_processed, batch_size=BATCH_SIZE)
+
+    for idx, v in enumerate(log_entry):
+        print("%s: %f" % (v, prediction[idx]))
 
 
 if __name__ == '__main__':
@@ -59,4 +55,4 @@ if __name__ == '__main__':
         csv_file = 'training.csv'
 
     if args[0] is not None:
-        predict(csv_file, args[0])
+        predict(args[0].split(','))

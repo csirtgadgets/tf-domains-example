@@ -21,6 +21,8 @@ from keras.preprocessing.text import Tokenizer
 from collections import OrderedDict
 from pprint import pprint
 
+BATCH_SIZE = os.getenv('TF_BATCHSIZE', 16)
+
 
 def train(csv_file):
     dataframe = pandas.read_csv(csv_file, engine='python', quotechar='"', header=None)
@@ -30,10 +32,7 @@ def train(csv_file):
     X = dataset[:, 0]
     Y = dataset[:, 1]
 
-    for index, item in enumerate(X):
-        X[index] = item
-
-    tokenizer = Tokenizer(filters='\t\n', char_level=True)
+    tokenizer = Tokenizer(filters='\t\n', char_level=True, lower=True)
     tokenizer.fit_on_texts(X)
 
     # Extract and save word dictionary
@@ -55,20 +54,17 @@ def train(csv_file):
     X_train, X_test = X_processed[0:train_size], X_processed[train_size:len(X_processed)]
     Y_train, Y_test = Y[0:train_size], Y[train_size:len(Y)]
 
-    tb_callback = TensorBoard(log_dir='./logs', embeddings_freq=1)
-
     model = Sequential()
-    model.add(Embedding(num_words, 32, input_length=max_log_length))
+    model.add(Embedding(num_words, output_dim=32, input_length=max_log_length))
     model.add(Dropout(0.5))
     model.add(LSTM(64, recurrent_dropout=0.5))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     print(model.summary())
-    model.fit(X_train, Y_train, validation_split=0.25, epochs=3, batch_size=5, callbacks=[tb_callback])
+    model.fit(X_train, Y_train, validation_split=0.25, epochs=3, batch_size=BATCH_SIZE)
 
-    # Evaluate model
-    score, acc = model.evaluate(X_test, Y_test, verbose=1, batch_size=5)
+    score, acc = model.evaluate(X_test, Y_test, verbose=1, batch_size=BATCH_SIZE)
 
     print("Model Accuracy: {:0.2f}%".format(acc * 100))
 
