@@ -20,8 +20,8 @@ from constants import MAX_STRING_LEN, MODEL, WEIGHTS, BATCH_SIZE
 BATCH_SIZE = int(BATCH_SIZE)
 MAX_STRING_LEN = int(MAX_STRING_LEN)
 
-NEURONS = os.getenv('TF_NEURONS', 128)  # g00gle.com 256?
-EMBEDDED_DIM = 300
+NEURONS = os.getenv('TF_NEURONS', 128)
+EMBEDDED_DIM = 500
 
 
 def train(csv_file):

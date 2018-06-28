@@ -16,6 +16,9 @@ from pprint import pprint
 
 from constants import MAX_STRING_LEN, MODEL, WEIGHTS, BATCH_SIZE
 
+BATCH_SIZE = int(BATCH_SIZE)
+MAX_STRING_LEN = int(MAX_STRING_LEN)
+
 
 def predict(i):
     tokenizer = Tokenizer(filters='\t\n', char_level=True, lower=True)
