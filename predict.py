@@ -6,22 +6,19 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-import sys
 import os
 import json
-import pandas
 import optparse
-from keras.models import Sequential, load_model
+from keras.models import load_model
 from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
 from pprint import pprint
 
-BATCH_SIZE = os.getenv('TF_BATCHSIZE', 32)
+from constants import MAX_STRING_LEN, MODEL, WEIGHTS, BATCH_SIZE
 
 
-def predict(log_entry):
-    # tokenizer = Tokenizer(filters='\t\n', char_level=True)
-    tokenizer = Tokenizer(filters='\t\n', char_level=True, lower=True, split='.')
+def predict(i):
+    tokenizer = Tokenizer(filters='\t\n', char_level=True, lower=True)
 
     word_dict_file = os.path.join('build/word-dict.json')
 
@@ -31,28 +28,21 @@ def predict(log_entry):
     txt = json.loads(txt)
     tokenizer.word_index = txt
 
-    seq = tokenizer.texts_to_sequences(log_entry)
-    max_log_length = 255
-    log_entry_processed = sequence.pad_sequences(seq, maxlen=max_log_length)
+    seq = tokenizer.texts_to_sequences(i)
+    i_processed = sequence.pad_sequences(seq, maxlen=MAX_STRING_LEN)
 
-    model = load_model('model.h5')
-    model.load_weights('weights.h5')
+    model = load_model(MODEL)
+    model.load_weights(WEIGHTS)
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    prediction = model.predict(log_entry_processed, batch_size=BATCH_SIZE)
+    prediction = model.predict(i_processed, batch_size=BATCH_SIZE)
 
-    for idx, v in enumerate(log_entry):
+    for idx, v in enumerate(i):
         print("%s: %f" % (v, prediction[idx]))
 
 
 if __name__ == '__main__':
     parser = optparse.OptionParser()
-    parser.add_option('-f', '--file', action="store", dest="file", help="data file")
     options, args = parser.parse_args()
-
-    if options.file is not None:
-        csv_file = options.file
-    else:
-        csv_file = 'training.csv'
 
     if args[0] is not None:
         predict(args[0].split(','))

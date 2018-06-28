@@ -6,24 +6,19 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-import sys
-import os
 import json
 import pandas
-import numpy
 import optparse
-from keras.callbacks import TensorBoard
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
-from collections import OrderedDict
-from pprint import pprint
 
-BATCH_SIZE = os.getenv('TF_BATCHSIZE', 4)
-NEURONS = os.getenv('TF_NEURONS', 256)  # g00gle.com 256?
-EMBEDDED_DIM = 255
+from constants import MAX_STRING_LEN, MODEL, WEIGHTS, BATCH_SIZE
+
+NEURONS = os.getenv('TF_NEURONS', 128)  # g00gle.com 256?
+EMBEDDED_DIM = 300
 
 
 def train(csv_file):
@@ -49,17 +44,16 @@ def train(csv_file):
     num_words = len(tokenizer.word_index)+1
     X = tokenizer.texts_to_sequences(X)
 
-    max_log_length = 255
     train_size = int(len(dataset) * .75)
 
-    X_processed = sequence.pad_sequences(X, maxlen=max_log_length)
+    X_processed = sequence.pad_sequences(X, maxlen=MAX_STRING_LEN)
     X_train, X_test = X_processed[0:train_size], X_processed[train_size:len(X_processed)]
     Y_train, Y_test = Y[0:train_size], Y[train_size:len(Y)]
 
     model = Sequential()
 
     # https://github.com/keras-team/keras/blob/master/examples/pretrained_word_embeddings.py
-    model.add(Embedding(num_words, output_dim=EMBEDDED_DIM, input_length=max_log_length))
+    model.add(Embedding(num_words, output_dim=EMBEDDED_DIM, input_length=MAX_STRING_LEN))
     model.add(Dropout(0.5))
     model.add(LSTM(NEURONS, recurrent_dropout=0.5))
     model.add(Dropout(0.5))
@@ -73,8 +67,8 @@ def train(csv_file):
     print("Model Accuracy: {:0.2f}%".format(acc * 100))
 
     # Save model
-    model.save_weights('weights.h5')
-    model.save('model.h5')
+    model.save_weights(WEIGHTS)
+    model.save(MODEL)
 
 
 if __name__ == '__main__':
