@@ -21,9 +21,9 @@ from keras.preprocessing.text import Tokenizer
 from collections import OrderedDict
 from pprint import pprint
 
-BATCH_SIZE = os.getenv('TF_BATCHSIZE', 8)
-NEURONS = os.getenv('TF_NEURONS', 128)
-EMBEDDED_DIM = 100
+BATCH_SIZE = os.getenv('TF_BATCHSIZE', 4)
+NEURONS = os.getenv('TF_NEURONS', 256)  # g00gle.com 256?
+EMBEDDED_DIM = 255
 
 
 def train(csv_file):
@@ -50,7 +50,7 @@ def train(csv_file):
     X = tokenizer.texts_to_sequences(X)
 
     max_log_length = 255
-    train_size = int(len(dataset) * .70)
+    train_size = int(len(dataset) * .75)
 
     X_processed = sequence.pad_sequences(X, maxlen=max_log_length)
     X_train, X_test = X_processed[0:train_size], X_processed[train_size:len(X_processed)]
@@ -66,7 +66,7 @@ def train(csv_file):
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     print(model.summary())
-    model.fit(X_train, Y_train, validation_split=0.3, epochs=3, batch_size=BATCH_SIZE)
+    model.fit(X_train, Y_train, validation_split=0.25, epochs=3, batch_size=BATCH_SIZE)
 
     score, acc = model.evaluate(X_test, Y_test, verbose=1, batch_size=BATCH_SIZE)
 
@@ -85,5 +85,5 @@ if __name__ == '__main__':
     if options.file is not None:
         csv_file = options.file
     else:
-        csv_file = 'training.csv'
+        csv_file = 'tmp/training.csv'
     train(csv_file)
