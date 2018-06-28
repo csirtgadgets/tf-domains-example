@@ -2,7 +2,7 @@
 
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -16,6 +16,9 @@ from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
 
 from constants import MAX_STRING_LEN, MODEL, WEIGHTS, BATCH_SIZE
+
+BATCH_SIZE = int(BATCH_SIZE)
+MAX_STRING_LEN = int(MAX_STRING_LEN)
 
 NEURONS = os.getenv('TF_NEURONS', 128)  # g00gle.com 256?
 EMBEDDED_DIM = 300
