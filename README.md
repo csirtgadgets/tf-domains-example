@@ -1,4 +1,4 @@
-# tf-phishing-example
+# tf-suspect-domains-example
 
 Based on the outstanding work by:
 
@@ -14,45 +14,45 @@ Using TensorFlow backend.
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #
 =================================================================
-embedding_1 (Embedding)      (None, 255, 255)          10200
+embedding_1 (Embedding)      (None, 255, 32)           1280
 _________________________________________________________________
-dropout_1 (Dropout)          (None, 255, 255)          0
+dropout_1 (Dropout)          (None, 255, 32)           0
 _________________________________________________________________
-lstm_1 (LSTM)                (None, 128)               196608
+lstm_1 (LSTM)                (None, 128)               82432
 _________________________________________________________________
 dropout_2 (Dropout)          (None, 128)               0
 _________________________________________________________________
 dense_1 (Dense)              (None, 1)                 129
 =================================================================
-Total params: 206,937
-Trainable params: 206,937
+Total params: 83,841
+Trainable params: 83,841
 Non-trainable params: 0
 _________________________________________________________________
 None
 Train on 27140 samples, validate on 9047 samples
 Epoch 1/3
-27140/27140 [==============================] - 588s 22ms/step - loss: 0.4016 - acc: 0.8198 - val_loss: 0.3427 - val_acc: 0.8597
+2018-06-28 12:00:46.329387: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+27140/27140 [==============================] - 64s 2ms/step - loss: 0.6195 - acc: 0.6618 - val_loss: 0.4532 - val_acc: 0.7954
 Epoch 2/3
-27140/27140 [==============================] - 587s 22ms/step - loss: 0.3302 - acc: 0.8574 - val_loss: 0.3198 - val_acc: 0.8624
+27140/27140 [==============================] - 63s 2ms/step - loss: 0.4753 - acc: 0.7798 - val_loss: 0.3749 - val_acc: 0.8363
 Epoch 3/3
-27140/27140 [==============================] - 587s 22ms/step - loss: 0.3116 - acc: 0.8676 - val_loss: 0.3047 - val_acc: 0.8760
-12063/12063 [==============================] - 40s 3ms/step
-Model Accuracy: 86.89%
+27140/27140 [==============================] - 63s 2ms/step - loss: 0.4182 - acc: 0.8138 - val_loss: 0.3565 - val_acc: 0.8407
+12063/12063 [==============================] - 6s 519us/step
+Model Accuracy: 84.60%
 
-real	30m5.305s
-user	90m56.160s
-sys	26m50.120s
+real	3m18.579s
+user	13m14.356s
+sys	    4m59.391s
+
 
 
 $ bash test.sh
-Using TensorFlow backend.
-google.com: 0.195869
-g00gle.com: 0.727469
-paypal.com: 0.456698
-secure-paypal.com: 0.905234
-securitymywindowspcsystem.info: 0.997279
-bank.wellsbankingsecurelogin.com: 0.739096
-apple-gps-tracker.xyz: 0.992589
-
+google.com: 0.268851
+g00gle.com: 0.644312
+paypal.com: 0.462150
+secure-paypal.com: 0.854046
+securitymywindowspcsystem.info: 0.963942
+bank.wellsbankingsecurelogin.com: 0.946198
+apple-gps-tracker.xyz: 0.957657
 
 ```
