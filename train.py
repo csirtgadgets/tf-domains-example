@@ -21,7 +21,9 @@ from keras.preprocessing.text import Tokenizer
 from collections import OrderedDict
 from pprint import pprint
 
-BATCH_SIZE = os.getenv('TF_BATCHSIZE', 16)
+BATCH_SIZE = os.getenv('TF_BATCHSIZE', 8)
+NEURONS = os.getenv('TF_NEURONS', 128)
+EMBEDDED_DIM = 100
 
 
 def train(csv_file):
@@ -48,21 +50,23 @@ def train(csv_file):
     X = tokenizer.texts_to_sequences(X)
 
     max_log_length = 255
-    train_size = int(len(dataset) * .75)
+    train_size = int(len(dataset) * .70)
 
     X_processed = sequence.pad_sequences(X, maxlen=max_log_length)
     X_train, X_test = X_processed[0:train_size], X_processed[train_size:len(X_processed)]
     Y_train, Y_test = Y[0:train_size], Y[train_size:len(Y)]
 
     model = Sequential()
-    model.add(Embedding(num_words, output_dim=32, input_length=max_log_length))
+
+    # https://github.com/keras-team/keras/blob/master/examples/pretrained_word_embeddings.py
+    model.add(Embedding(num_words, output_dim=EMBEDDED_DIM, input_length=max_log_length))
     model.add(Dropout(0.5))
-    model.add(LSTM(64, recurrent_dropout=0.5))
+    model.add(LSTM(NEURONS, recurrent_dropout=0.5))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     print(model.summary())
-    model.fit(X_train, Y_train, validation_split=0.25, epochs=3, batch_size=BATCH_SIZE)
+    model.fit(X_train, Y_train, validation_split=0.3, epochs=3, batch_size=BATCH_SIZE)
 
     score, acc = model.evaluate(X_test, Y_test, verbose=1, batch_size=BATCH_SIZE)
 

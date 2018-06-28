@@ -9,15 +9,14 @@ https://csirtgadgets.com/commits/2018/6/9/phishing-predictions-with-deep-learnin
 ```bash
 $ mkvirtualenv tf
 $ pip install pandas tensorflow keras
-$ time python train.py --file data.csv
-
+$ time bash rebuild.sh
 Using TensorFlow backend.
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #
 =================================================================
-embedding_1 (Embedding)      (None, 2083, 32)          2112
+embedding_1 (Embedding)      (None, 255, 32)           1280
 _________________________________________________________________
-dropout_1 (Dropout)          (None, 2083, 32)          0
+dropout_1 (Dropout)          (None, 255, 32)           0
 _________________________________________________________________
 lstm_1 (LSTM)                (None, 64)                24832
 _________________________________________________________________
@@ -25,36 +24,29 @@ dropout_2 (Dropout)          (None, 64)                0
 _________________________________________________________________
 dense_1 (Dense)              (None, 1)                 65
 =================================================================
-Total params: 27,009
-Trainable params: 27,009
+Total params: 26,177
+Trainable params: 26,177
 Non-trainable params: 0
 _________________________________________________________________
 None
-Train on 35129 samples, validate on 11710 samples
-2018-06-09 10:10:30.992495: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+Train on 27140 samples, validate on 9047 samples
 Epoch 1/3
-35129/35129 [==============================] - 815s 23ms/step - loss: 0.4950 - acc: 0.7581 - val_loss: 0.3881 - val_acc: 0.8201
+27140/27140 [==============================] - 273s 10ms/step - loss: 0.5120 - acc: 0.7460 - val_loss: 0.3662 - val_acc: 0.8395
 Epoch 2/3
-35129/35129 [==============================] - 870s 25ms/step - loss: 0.3833 - acc: 0.8324 - val_loss: 0.3333 - val_acc: 0.8523
+27140/27140 [==============================] - 268s 10ms/step - loss: 0.4000 - acc: 0.8283 - val_loss: 0.3562 - val_acc: 0.8432
 Epoch 3/3
-35129/35129 [==============================] - 825s 23ms/step - loss: 0.3452 - acc: 0.8495 - val_loss: 0.3025 - val_acc: 0.8653
-15613/15613 [==============================] - 57s 4ms/step
-Model Accuracy: 86.99%
+27140/27140 [==============================] - 268s 10ms/step - loss: 0.3759 - acc: 0.8397 - val_loss: 0.3373 - val_acc: 0.8574
+12063/12063 [==============================] - 18s 1ms/step
+Model Accuracy: 85.44%
+(tf) h:tf-domains-example wes$ bash test.sh
+Using TensorFlow backend.
+google.com: 0.292872
+g00gle.com: 0.707535
+paypal.com: 0.571224
+secure-paypal.com: 0.900945
+securitymywindowspcsystem.info: 0.969256
+bank.wellsbankingsecurelogin.com: 0.915325
+apple-gps-tracker.xyz: 0.983738
 
-real	43m2.124s
-user	131m15.837s
-sys	42m0.835s
-
-$ python predict.py http://raganinfotech.com/ow/adb/0016dc3e2b506150a88aebc589eb12f9
-[0.9533803]
-
-$ python predict.py http://dvxtmac.com/home/Validation/login.php?cmd=login_submit
-[0.48320338]
-
-$ ./predict.py https://google.com
-[0.69641]
-
-$ ./predict.py https://google.com/about-us
-[0.03857325]
 
 ```
